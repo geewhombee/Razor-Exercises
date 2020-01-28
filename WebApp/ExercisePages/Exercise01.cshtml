@@ -8,6 +8,7 @@
     //the data returned comes in as a STRING
     var myname = Request.Form["dataentry"];
     var thebutton = Request.Form["theButton"];
+    string choices = "";
     //any other additional processing such as database access
 }
 
@@ -25,6 +26,7 @@
     //IF you have multiple buttons on your form, you SHOULD
     //determine which button was pressed; thus; dictating WHICH
     //logic is to be EXECUTED
+    choices = Request.Form["GameGroup"];
     if (thebutton.Equals("submit"))
     {
         //the Press Me button was pressed
@@ -32,9 +34,23 @@
         {
             <p style="color:firebrick">You don't have a name?</p>
         }
+        else if (choices.IsEmpty())
+        {
+            <p style="color:firebrick">You don't like Food?</p>
+            choices = "";
+        }
         else
         {
-            <p>Hello there @myname</p>
+            <p>Hello there @myname!</p>            
+            <p>
+                I see you like the following Foods:
+                <ul>
+                    @foreach (var platform in choices.Split(','))
+                     {
+                         <li>@platform</li>
+                     }
+                </ul>
+            </p>
         }
     }
     else
@@ -51,30 +67,13 @@ else
     @*<p>IsPost = false</p>*@
 }
 
-@*<form id="theform" method="post">
-    <div class="row">
-        <div class="offset-1">
-            <label id="label1" for="dataentry">Enter your full name:</label>&nbsp;&nbsp;
-            <input type="text" id="dataentry" name="dataentry" value="@myname" />
-            <br /><br />
-            <button type="submit" id="theButton" name="theButton"
-                    value="submit" class="btn btn-primary">
-                Submit
-            </button>&nbsp;&nbsp;
-            <button type="submit" id="theButton" name="theButton"
-                    value="reset" class="btn btn-light">
-                Reset
-            </button>
-        </div>
-    </div>
-</form>*@
 <form id="EX01" method="post">
     <div class="row offset-1">
         <div class="col-md-3">
             <label id="label2" for="dataentry">Customer Name:</label>
             <div>
                 <input type="text" id="dataentry" name="dataentry" value="@myname" />
-            </div>            
+            </div>
             <br /><br />
             <button type="submit" id="theButton" name="theButton"
                     value="submit" class="btn btn-primary">
@@ -85,7 +84,14 @@ else
                 Reset
             </button>
         </div>
-        <div class="col-md-9">alkj</div>
+        <div class="col-md-9">
+            <label id="lblGameGroup">Choose Your Meal Items:</label><br />            
+            <input type="checkbox" id="GameGroup" name="GameGroup" value="Pizza" />Pizza<br />
+            <input type="checkbox" id="GameGroup" name="GameGroup" value="Cupcakes" />Cupcakes<br />
+            <input type="checkbox" id="GameGroup" name="GameGroup" value="Sandwhiches" />Sandwhiches<br />
+            <input type="checkbox" id="GameGroup" name="GameGroup" value="Pickles" />Pickles<br />
+            <input type="checkbox" id="GameGroup" name="GameGroup" value="Mango" />Mango<br /><br />
+        </div>
     </div>
     <div class="row">
 

@@ -1,8 +1,146 @@
 ﻿@{
     Layout = "~/_Layout.cshtml";
-    Page.Title = string.Format("Razor - {0}", "Exercise 03");
+    Page.Title = string.Format("Razor - {0}", "Exercise 03 -\tEnter Album");
+
+    //consider your need for global variables
+    var albumName = "";
+    var artistid = "0";
+    var albumYear = "";
+    var albumLabel = "";
+
+    var db = Database.Open("Chinook");
+    var artistquery = "SELECT ArtistId, Name "
+            + "FROM Artists "
+            + "Order by Name";
+    var artistlist = db.Query(artistquery);
+    int artListLen = artistlist.Count();
+
+
+    //these are validator controls execute on the server side
+
+    Validation.Add("AlbumName",
+         Validator.Required("Album name is required"),
+         Validator.StringLength(160, 1, "Album name is limited to 40 characters"));
+
+    Validation.Add("ArtistList",
+         Validator.Range(1, artistlist.Count(), "Artist is required"));
+
+    Validation.Add("AlbumYear",
+        Validator.Required("Album Year is required"),
+        Validator.Integer("Album Year must be a number."),
+        Validator.Range(1950, DateTime.Today.Year, "Album Year must be between 1950 and Today"));
+
+    Validation.Add("AlbumLabel",
+        Validator.StringLength(40, 0, "Album label is limited to 40 characters"));
+       
 }
 
-@section banner {
+
+@section banner{
     <h1>@Page.Title</h1>
 }
+
+@if (IsPost)
+{
+    albumName = Request.Form["AlbumName"];
+    artistid = Request.Form["ArtistList"];
+    albumYear = Request.Form["AlbumYear"];
+    albumLabel = Request.Form["AlbumLabel"];
+    var thebutton = Request.Form["FormButton"];
+
+    if (thebutton.Equals("Clear")) //pressed the CLEAR button
+    {
+        albumName = "";
+        artistid = "0";
+        albumYear = "";
+        albumLabel = "";
+    }
+    else
+    {
+        if (Validation.IsValid())
+        {
+            try
+            {
+                var inscommand = "INSERT INTO Albums (Title, ArtistId, ReleaseYear, ReleaseLabel) "
+                    + "VALUES(@0, @1, @2, @3)";
+                db.Execute(inscommand, albumName, artistid, albumYear, string.IsNullOrEmpty(albumLabel) ? null : albumLabel);
+                <div class="col-12 text-center">
+                    <p style="color:green">
+                        Album has been ADDED
+                    </p>
+                </div>                
+            }
+            catch (Exception ex)
+            {
+                <div class="col-12 text-center">
+                    <p style="color:firebrick; font-size:large">
+                        Processing error: @ex.Message
+                    </p>
+                </div>
+            }
+        }
+    }
+}
+@Html.ValidationSummary()
+<form id="theForm" action="" method="post">
+    <div class="row row-cols-2">
+
+        <div class="col text-right">
+            <label id="lblAlbumName" for="AlbumName">Name:</label>
+        </div>
+        <div class="col text-left">
+            <input type="text" name="AlbumName" value="@albumName" />
+        </div><br />
+
+        <div class="col text-right">
+            <label id="lblArtistList" for="ArtistList">Artist:</label>
+        </div>
+        <div class="col text-left">
+            <select name="ArtistList">
+                <option value="0">select from @artistlist.Count() records ...</option>
+                @foreach (var acollectionrow in artistlist)
+                {
+                    if (acollectionrow.ArtistId.ToString() == artistid)
+                    {
+                        <option value="@acollectionrow[0]" selected>@acollectionrow[1]</option>
+                    }
+                    else
+                    {
+                        <option value="@acollectionrow[0]">@acollectionrow[1]</option>
+                    }
+                }
+            </select>
+        </div><br />
+
+        <div class="col text-right">
+            <label id="lblAlbumYear" for="AlbumYear">Year:</label>
+        </div>
+        <div class="col text-left">
+            <input type="text" name="AlbumYear" value="@albumYear" />
+        </div><br />
+
+        <div class="col text-right">
+            <label id="lblAlbumLabel" for="AlbumLabel">Label:</label>
+        </div>
+        <div class="col text-left">
+            <input type="text" name="AlbumLabel" value="@albumLabel" />
+        </div><br />
+    </div>
+    <div class="row">
+        <div class="col-12 text-center">
+            <input type="submit" id="theAdd" name="FormButton"
+                   class="btn btn-primary" value="Add" />
+            <input type="submit" id="theClear" name="FormButton" formnovalidate
+                   class="btn" value="Clear" />
+        </div>
+    </div>
+    @* confirmation can be done on a button click using javascript
+        we will ask the user to confirm the insertion of a product*@
+    <script type="text/javascript">
+        document.getElementById("theAdd").onclick = ConfirmAdd;
+        function ConfirmAdd() {
+            return confirm("Are you sure you want to ADD @albumName?");
+        }
+    </script>
+
+</form>

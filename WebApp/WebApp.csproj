@@ -130,7 +130,7 @@
     <Content Include="ExercisePages\Exercise03.cshtml" />
     <Content Include="ExercisePages\Exercise02B.cshtml" />
     <Content Include="ExercisePages\Exercise02C.cshtml" />
-    <Content Include="ExercisePages\ContentPage1.cshtml" />
+    <Content Include="ExamplePages\ContentPage1.cshtml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -243,6 +243,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\index.d.ts" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

@@ -15,7 +15,8 @@
     var prodquery = @"SELECT Albums.AlbumId, Albums.Title, Artists.Name, Albums.ReleaseYear, Albums.ReleaseLabel "
                         + "FROM Albums "
                         + "INNER JOIN Artists ON Albums.ArtistId=Artists.ArtistId "
-                        + "WHERE Title like @0 ";
+                        + "WHERE Title like @0 "
+                        + "ORDER by Artists.Name";
                         
     var prodinfo = db.Query(prodquery, partialstring);
 
